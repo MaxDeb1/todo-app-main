@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frontend Mentor | Todo app List</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"
+      integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o="
+      crossorigin="anonymous"
+    />
+  </head>
+  <body data-theme="">
+    <img id="bgImage" src="/images/bg-desktop-light.jpg" alt="Desktop background">
+    <main>
+      <header>
+        <h1>Todo</h1>
+        <div id="theme" onclick="switchTheme()">
+          <img id="icon" src="/images/icon-moon.svg" alt="">
+        </div>
+      </header>
+      <form>
+        <input type="checkbox" class="todo-button checkbox"></input>
+        <input type="text" class="todo-input" placeholder="Create a new todo..."
+        autoComplete="off" />
+      </form>
+      <div class="todo-container">
+        <ul id="sortList" class="todo-list"></ul>
+        <div class="todoMenu">
+          <div class="remaining">
+            <span></span> items left
+          </div>
+          <div class="filter-todo">
+            <div id="all" class="active">All</div>
+            <div id="active">Active</div>
+            <div id="completed">Completed</div>
+          </div>
+          <div class="clear-btn">Clear Completed</div>
+        </div>
+      </div>
+      <div class="legend">Drag and drop to reorder list</div>
+    </main>
+    <script src="./app.js"></script>
+    <script src="./theme.js"></script>
+  </body>
+</html>
