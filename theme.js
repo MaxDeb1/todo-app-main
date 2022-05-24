@@ -49,11 +49,11 @@ function setTheme() {
     /* themeSwitcher.innerText = currentTheme === 'light' ? 'Dark' : 'Light' */
 
     if (currentTheme === 'light') {
-        bgImage.setAttribute('src', '/images/bg-desktop-light.jpg');
-        themeIcon.setAttribute('src', '/images/icon-moon.svg');
+        bgImage.setAttribute('src', './images/bg-desktop-light.jpg');
+        themeIcon.setAttribute('src', './images/icon-moon.svg');
     } else {
-        bgImage.setAttribute('src', '/images/bg-desktop-dark.jpg');
-        themeIcon.setAttribute('src', '/images/icon-sun.svg');
+        bgImage.setAttribute('src', './images/bg-desktop-dark.jpg');
+        themeIcon.setAttribute('src', './images/icon-sun.svg');
     }
 }
 
