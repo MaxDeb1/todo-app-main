@@ -36,17 +36,6 @@
     --Text-clr: hsl(234, 39%, 85%);
 }
 
-/* [data-theme='dark'] {
-  --VerDarkBlue: hsl(235, 21%, 11%);
-  --VeryDarkDesaturatedBlue: hsl(235, 24%, 19%);
-  --LightGrayishBlue: hsl(234, 39%, 85%);
-  --LightGrayishBlueHover: hsl(236, 33%, 92%);
-  --DarkGrayishBlue: hsl(234, 11%, 52%);
-  --VeryDarkGrayishBlue: hsl(233, 14%, 35%);
-  --VeryDarkGrayishBlue: hsl(237, 14%, 26%);
-} */
-
-
 * {
   margin: 0;
   padding: 0;
@@ -68,6 +57,12 @@ body {
 .legend {
     max-width: 540px;
     height: 64px;
+}
+
+.bgImage {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
 }
 
 main {
@@ -111,7 +106,6 @@ form,
   display: flex;
   align-items: center;
   padding: 0 24px;
-  border-radius: 5px;
   position: relative;
 }
 
@@ -136,6 +130,10 @@ form button {
   background-color: transparent;
 }
 
+.todo > .complete-btn {
+  cursor: pointer;
+}
+
 .checkbox,
 .complete-btn {
   position: relative;
@@ -144,7 +142,6 @@ form button {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  cursor: pointer;
 }
 
 .checkbox::after,
@@ -178,22 +175,17 @@ form button {
   z-index: 5;
 }
 
-.checkbox:hover::before,
+/* .checkbox:hover::before, */
 .complete-btn:hover::before {
   background: -webkit-gradient(linear, left top, left bottom, from(#57ddff), to(#c058f3));
   background: linear-gradient(to bottom, #57ddff, #c058f3);
 }
 
-/* .checkbox:hover::after,
-.complete-btn:hover::after {
-  background: no-repeat url(../images/icon-check.svg) center/60% var(--Todo-Bg-clr);
-  background: no-repeat url(../images/icon-check.svg) center/60% var(--Todo-Bg-clr);
-} */
-
-.checkbox:checked::after,
+.checkbox:hover:enabled::after,
 .complete-btn:checked::after {
   background: no-repeat url(../images/icon-check.svg) center/60%, -webkit-gradient(linear, left top, left bottom, from(#57ddff), to(#c058f3));
   background: no-repeat url(../images/icon-check.svg) center/60%, linear-gradient(to bottom, #57ddff, #c058f3);
+  cursor: pointer;
 }
 
 .todo-container {
@@ -209,16 +201,27 @@ form button {
 }
 
 .todo {
-  display: flex;
   border-bottom: 1px solid var(--Border-clr);
   transition: all 0.5s ease;
   user-select: none;
 }
 
+.todo:hover {
+  cursor: grab;
+}
+
+.todo.grab {
+  cursor: grabbing;
+}
+
 .todo.hint {
   opacity: .5;
-  background-color: red;
-  cursor: grabbing;
+  background-color: #ff0202;
+}
+
+.todo.active {
+  background-color: #feffb4;
+/*   border-radius: 5px; */
 }
 
 .todo-input,
@@ -226,11 +229,6 @@ form button {
   display: flex;
   align-items: center;
   margin-left: 24px;
-}
-
-.todo-item {
-  /* width: 100%; */
-  cursor: grab;
 }
 
 .trash-btn {
@@ -346,7 +344,7 @@ form button {
 
 
 
-.container {
+/* .container {
   background-color: #333;
   padding: 1rem;
   margin-top: 1rem;
@@ -361,4 +359,4 @@ form button {
 
 .draggable.dragging {
   opacity: .5;
-}
+} */

@@ -12,14 +12,21 @@ todoButton.addEventListener("click", addTodo);
 todoList.addEventListener("click", deleteCheck);
 filterOption.addEventListener("click", filterTodo);
 clear.addEventListener("click", clearItems);
+window.addEventListener("load", drag);
 
-//FUNCTIONS
 form.addEventListener('submit', (e) =>{
-  e.preventDefault();
+  e.preventDefault()
+  addTodo();
 })
 
-function addTodo(event) {
-  event.preventDefault();
+todoInput.addEventListener('input', function(event) {
+  if (todoInput.value.length) {
+    todoButton.removeAttribute('disabled'); 
+  }
+});
+
+//FUNCTIONS
+function addTodo() {
   if(todoInput.value !== ""){
     //Todo DIV
     const todoDiv = document.createElement("div");
@@ -45,6 +52,7 @@ function addTodo(event) {
     //AJOUTER NOTRE TODO À TODO-LIST
     todoList.appendChild(todoDiv);
     todoInput.value = "";
+    todoButton.setAttribute("disabled",'disabled');
     remainingItems()
   }
   drag()
@@ -52,16 +60,17 @@ function addTodo(event) {
 
 function deleteCheck(e) {
   const item = e.target;
+  const todo = item.parentElement;
+
   //DELETE TODO
   if (item.classList[0] === "trash-btn") {
-    const todo = item.parentElement;
     todo.classList.add("fall");
-    removeLocalTodos(todo);
     todo.addEventListener("transitionend", function() {
       todo.remove();
       remainingItems()
       hideContainer()
     });
+    removeLocalTodos(todo)
   }
 
   //CHECK MARK
@@ -136,7 +145,6 @@ function clearItems(completed) {
   hideContainer()
 }
 
-
 function saveLocalTodos(todo) {
   //Checker si il y a des items existants
   let todos;
@@ -146,6 +154,21 @@ function saveLocalTodos(todo) {
     todos = JSON.parse(localStorage.getItem("todos"));
   }
   todos.push(todo);
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+function removeLocalTodos(todo) {
+  let index = Array.from(todo.parentElement.children).indexOf(todo);
+  let todos;
+  
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+    console.log(todos);
+  }
+
+  todos.splice(index, 1);
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 
@@ -182,19 +205,6 @@ function getTodos() {
   
   remainingItems()
   hideContainer()
-
-}
-
-function removeLocalTodos(todo) {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
-  const todoIndex = todo.children[0].innerText;
-  todos.splice(todos.indexOf(todoIndex), 1);
-  localStorage.setItem("todos", JSON.stringify(todos));
 }
 
 function hideContainer() {
@@ -209,32 +219,59 @@ function hideContainer() {
   }
 }
 
-
-window.addEventListener("load", function() {
+function drag() {
+  // (A) GET ALL LIST ITEMS
   const items = document.getElementsByClassName('todo');
   console.log(items);
-  dragged = null;
   let todoArray = JSON.parse(localStorage.getItem("todos"));
+  console.log(todoArray);
 
+  // (B) MAKE ITEMS DRAGGABLE + SORTABLE
   for (let i of items) {
-    i.addEventListener("dragstart", function(e) {
+    // (B1) ATTACH DRAGGABLE
+    i.draggable = true;
+
+    i.onmousedown = function() {
+      i.classList.add('grab');
+    };
+    
+    i.onmouseup = function() {
+      i.classList.remove('grab');
+    };
+    
+    // (B2) DRAG START - YELLOW HIGHLIGHT DROPZONES
+    i.ondragstart = (e) => {
       current = i;
       e.target.classList.add("hint");
-      console.log(i.childNodes[1].innerText)
+
       textDrop= i.childNodes[1].innerText
-    });
+      console.log(textDrop);
+    };
+    
+    // (B3) DRAG ENTER - RED HIGHLIGHT DROPZONE
+    i.ondragenter = () => {
+      if (i != current) { i.classList.add("active"); }
+    };
 
-    i.addEventListener("dragend", function(e) {
-      e.target.classList.remove("hint");
-    });
+    // (B4) DRAG LEAVE - REMOVE RED HIGHLIGHT
+    i.ondragleave = () => {
+      i.classList.remove("active");
+    };
 
-    i.addEventListener("dragover", (e) => {
-      e.preventDefault(); 
-    });
-
-    i.addEventListener("drop", (e) => {
-
-      e.preventDefault();
+    // (B5) DRAG END - REMOVE ALL HIGHLIGHTS
+    i.ondragend = (ev) => { for (let it of items) {
+       ev.target.classList.remove("hint");
+      for (let it of items) {
+        it.classList.remove("active");
+      }
+    }};
+ 
+    // (B6) DRAG OVER - PREVENT THE DEFAULT "DROP", SO WE CAN DO OUR OWN
+    i.ondragover = (evt) => { evt.preventDefault(); };
+ 
+    // (B7) ON DROP - DO SOMETHING
+    i.ondrop = (evt) => {
+      evt.preventDefault();
       if (i != current) {
         let currentpos = 0, droppedpos = 0;
         for (let it=0; it<items.length; it++) {
@@ -243,20 +280,13 @@ window.addEventListener("load", function() {
         }
         if (currentpos < droppedpos) {
           i.parentNode.insertBefore(current, i.nextSibling);
-
-          todoArray.splice(currentpos, 1)
-          todoArray.splice(droppedpos, 0, String(textDrop))
-          console.log(todoArray);
-          localStorage.setItem("todos", JSON.stringify(todoArray));
         } else {
           i.parentNode.insertBefore(current, i);
-
-          todoArray.splice(currentpos, 1)
-          todoArray.splice(droppedpos, 0, String(textDrop))
-          console.log(todoArray);
-          localStorage.setItem("todos", JSON.stringify(todoArray));
         }
+        todoArray.splice(currentpos, 1)
+        todoArray.splice(droppedpos, 0, String(textDrop))
+        localStorage.setItem("todos", JSON.stringify(todoArray));
       }
-    });
+    };
   }
-});
+}
