@@ -1,5 +1,7 @@
 # Frontend Mentor - Todo app
 
+[Live site](https://maxdeb1.github.io/todo-app-main/)
+
 ![Design preview for the Todo app coding challenge](./design/desktop-preview.jpg)
 
 ## Welcome! 👋
