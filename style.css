@@ -53,10 +53,14 @@ body {
 
 .todo-input,
 .todo-container > *,
-.todo-item,
+.item,
 .legend {
     max-width: 540px;
     height: 64px;
+}
+
+.todo-input { /** + item text**/
+  margin-left: 24px;
 }
 
 .bgImage {
@@ -101,7 +105,7 @@ form,
 }
 
 form,
-.todo {
+.item {
   width: 100%;
   display: flex;
   align-items: center;
@@ -126,11 +130,7 @@ form,
   color: var(--Text-accent-clr);
 }
 
-form button {
-  background-color: transparent;
-}
-
-.todo > .complete-btn {
+.item > .complete-btn {
   cursor: pointer;
 }
 
@@ -194,44 +194,37 @@ form button {
   border-radius: 5px;
 }
 
-.todo-list {
+.todo-items {
   width: 100%;
   height: 100%;
   list-style: none;
 }
 
-.todo {
+.item {
   border-bottom: 1px solid var(--Border-clr);
   transition: all 0.5s ease;
   user-select: none;
 }
 
-.todo:hover {
+.item:hover {
   cursor: grab;
 }
 
-.todo.grab {
+.item.grab {
   cursor: grabbing;
 }
 
-.todo.hint {
+.item.hint {
   opacity: .5;
   background-color: #ff0202;
 }
 
-.todo.active {
+.item.active {
   background-color: #feffb4;
 /*   border-radius: 5px; */
 }
 
-.todo-input,
-.todo-item {
-  display: flex;
-  align-items: center;
-  margin-left: 24px;
-}
-
-.trash-btn {
+.delete-button {
   display: none;
   width: 27.5px;
   height: 27.5px;
@@ -242,8 +235,8 @@ form button {
   cursor: pointer;
 }
 
-.trash-btn:before, 
-.trash-btn:after{
+.delete-button:before, 
+.delete-button:after{
   content:'';
   position: absolute;
   width: 23px;
@@ -253,21 +246,21 @@ form button {
   top: 16px;
 }
 
-.trash-btn:before{
+.delete-button:before{
   -webkit-transform:rotate(45deg);
   -moz-transform:rotate(45deg);
   transform:rotate(45deg);
   left:3px;
 }
 
-.trash-btn:after{
+.delete-button:after{
   -webkit-transform:rotate(-45deg);
   -moz-transform:rotate(-45deg);
   transform:rotate(-45deg);
   right:2px;
 }
 
-.todo:hover .trash-btn {
+.item:hover .delete-button {
   display: block;
 }
 
@@ -276,9 +269,9 @@ form button {
   pointer-events: none;
 }
 
-.completed li {
+.checked .todo {
   /* text-decoration: line-through; */
-  background: linear-gradient(to bottom, var(--Text-clr), var(--Text-clr)) no-repeat center 34px / 100% 1px;
+  background: linear-gradient(to bottom, var(--Text-clr), var(--Text-clr)) no-repeat center 12px / 100% 1px;
   opacity: 0.3;
 }
 
@@ -332,6 +325,11 @@ form button {
   color: var(--Text-accent-clr);
 }
 
+.remaining span {
+  display: inline-block;
+  width: 10px;
+}
+
 .attribution { 
   font-size: 11px; text-align: center; 
 }
@@ -339,24 +337,3 @@ form button {
 .attribution a { 
   color: hsl(228, 45%, 44%); 
 }
-
-
-
-
-
-/* .container {
-  background-color: #333;
-  padding: 1rem;
-  margin-top: 1rem;
-}
-
-.draggable {
-  padding: 1rem;
-  background-color: white;
-  border: 1px solid black;
-  cursor: move;
-}
-
-.draggable.dragging {
-  opacity: .5;
-} */

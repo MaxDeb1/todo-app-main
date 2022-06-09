@@ -1,93 +1,177 @@
 //SELECTEURS
 const form = document.querySelector('form');
 const todoInput = document.querySelector(".todo-input");
-const todoButton = document.querySelector(".todo-button");
-const todoList = document.querySelector(".todo-list");
+const addButton = document.querySelector(".add-button");
+const todoItemsList = document.querySelector(".todo-items");
 const filterOption = document.querySelector(".filter-todo");
 const clear = document.querySelector(".clear-btn");
 
 //ECOUTEURS
-document.addEventListener("DOMContentLoaded", getTodos);
-todoButton.addEventListener("click", addTodo);
-todoList.addEventListener("click", deleteCheck);
 filterOption.addEventListener("click", filterTodo);
 clear.addEventListener("click", clearItems);
-window.addEventListener("load", drag);
 
-form.addEventListener('submit', (e) =>{
+form.addEventListener('submit', (e) => {
   e.preventDefault()
-  addTodo();
+  addTodo(todoInput.value);
 })
 
-todoInput.addEventListener('input', function(event) {
+addButton.addEventListener("click", (e) => {
+  e.preventDefault()
+  addTodo(todoInput.value);
+})
+
+todoInput.addEventListener('input', () => {
   if (todoInput.value.length) {
-    todoButton.removeAttribute('disabled'); 
+    addButton.removeAttribute('disabled'); 
   }
 });
 
 //FUNCTIONS
-function addTodo() {
-  if(todoInput.value !== ""){
-    //Todo DIV
-    const todoDiv = document.createElement("div");
+let todos = []
+
+function addTodo(item) {
+  // if item is not empty
+  if (item !== '') {
+    // make a todo object, which has id, name, and completed properties
+    const todo = {
+      id: Date.now(),
+      name: item,
+      completed: false
+    };
+
+    // then add it to todos array
+    todos.push(todo);
+    addToLocalStorage(todos);
+    
+    // finally clear the input box value
+    todoInput.value = '';
+
+    addButton.setAttribute("disabled",'disabled');
+  }
+}
+
+// function to add todos to local storage
+function addToLocalStorage(todos) {
+  // conver the array to string then store it.
+  localStorage.setItem('todos', JSON.stringify(todos));
+  // render them to screen
+  renderTodos();
+}
+
+// function to render given todos to screen
+function renderTodos() {
+  todos = JSON.parse(localStorage.getItem("todos"));
+// clear everything inside <ul> with class=todo-items
+  todoItemsList.innerHTML = '';
+
+// run through each item inside todos
+  todos.forEach(function(item) {
+    // check if the item is completed
+    const checked = item.completed ? 'checked': null;
+  
+// make a <li> element and fill it
+    const li = document.createElement('li');
     const a = document.createAttribute("draggable");
     a.value = "true";
-    todoDiv.setAttributeNode(a);
-    todoDiv.classList.add("todo");
-    //Input checkbox
-    todoDiv.insertAdjacentHTML( 'beforeend',
-    `<input type="checkbox" name="checkbox" class="complete-btn">`);
-    //Créer le Li
-    const newTodo = document.createElement("li");
-    newTodo.innerText = todoInput.value;
-    newTodo.classList.add("todo-item");
-    todoDiv.appendChild(newTodo);
-    //Ajouter la todo au localstorage
-    saveLocalTodos(todoInput.value);
-    hideContainer()
-    //Bouton Supprimer
-    const trashButton = document.createElement("button");
-    trashButton.classList.add("trash-btn");
-    todoDiv.appendChild(trashButton);
-    //AJOUTER NOTRE TODO À TODO-LIST
-    todoList.appendChild(todoDiv);
-    todoInput.value = "";
-    todoButton.setAttribute("disabled",'disabled');
-    remainingItems()
-  }
-  drag()
+    li.setAttributeNode(a);
+    li.setAttribute('class', 'item');
+    li.setAttribute('data-key', item.id);
+
+    // if item is completed, then add a class to <li> called 'checked', 
+    // which will add line-through style
+    if (item.completed === true) {
+      li.classList.add('checked');
+    }
+    
+    li.insertAdjacentHTML( 'beforeend',
+    `<input type="checkbox" class="complete-btn" ${checked}>
+      <div class="todo">${item.name}</div>
+     <button class="delete-button"></button>
+    `);
+    // finally add the <li> to the <ul>
+    todoItemsList.append(li);
+  });
+  // update the counter
+  remainingItems();
+
+  hideContainer();
+  drag();
 }
 
-function deleteCheck(e) {
-  const item = e.target;
-  const todo = item.parentElement;
 
-  //DELETE TODO
-  if (item.classList[0] === "trash-btn") {
-    todo.classList.add("fall");
-    todo.addEventListener("transitionend", function() {
-      todo.remove();
-      remainingItems()
+// function helps to get everything from local storage
+function getFromLocalStorage() {
+  const reference = localStorage.getItem('todos');
+  // if reference exists
+  if (reference) {
+    // converts back to array and store it in todos array
+    todos = JSON.parse(reference);
+    renderTodos(todos);
+  }
+}
+
+// initially get everything from localStorage
+getFromLocalStorage();
+
+
+// Add addEventListener for click event in all delete-button and checkbox
+todoItemsList.addEventListener('click', function(event) {
+  // check if the event is on checkbox
+  if (event.target.type === 'checkbox') {
+    // toggle the state
+    toggle(event.target.parentElement.getAttribute('data-key'));
+  }
+  
+  // check if that is a delete-button
+  if (event.target.classList.contains('delete-button')) {
+    item = event.target.parentElement;
+    item.classList.add("fall");
+    item.addEventListener("transitionend", function() {
+      // get id from data-key attribute's value of parent <li> where the delete-button is present
+      deleteTodo(event.target.parentElement.getAttribute('data-key'));
+
       hideContainer()
     });
-    removeLocalTodos(todo)
   }
+});
 
-  //CHECK MARK
-  if (item.classList[0] === "complete-btn") {
-    const todo = item.parentElement;
-    todo.classList.toggle("completed");
-    remainingItems()
-  }
-
-  drag()
+// toggle the value to completed and not completed
+function toggle(id) {
+  todos.forEach(function(item) {
+    // use == not ===, because here types are different. One is number and other is string
+    if (item.id == id) {
+      // toggle the value
+      item.completed = !item.completed;
+    }
+  });
+  
+  // update the localStorage
+  addToLocalStorage(todos);
+  // update the counter
+  remainingItems();
 }
+
+// deletes a todo from todos array, then updates localstorage and renders updated list to screen
+function deleteTodo(id) {
+  // filters out the <li> with the id and updates the todos array
+  todos = todos.filter(function(item) {
+    // use != not !==, because here types are different. One is number and other is string
+    return item.id != id;
+  });
+  
+  // update the localStorage
+  addToLocalStorage(todos);
+  // update the counter
+  remainingItems();
+}
+
 
 function remainingItems() {
   const span = document.querySelector(".remaining span");
 
-  activeTodos = document.querySelectorAll('ul > div:not(.completed)');
+  activeTodos = document.querySelectorAll('ul > li:not(.checked)');
   span.innerHTML = activeTodos.length;
+  /* span.insertAdjacentHTML( 'beforeend', `${activeTodos.length}`); */
 }
 
 function activeFilter(e) {
@@ -99,24 +183,24 @@ function activeFilter(e) {
 }
 
 function filterTodo(e) {
-  const todos = todoList.childNodes;
-  todos.forEach(function (todo) {
+  const items = todoItemsList.childNodes;
+  items.forEach(function (item) {
     switch (e.target.id) {
       case "all":
-        todo.style.display = "flex";
+        item.style.display = "flex";
         break;
       case "completed":
-        if (todo.classList.contains("completed")) {
-          todo.style.display = "flex";
+        if (item.classList.contains("checked")) {
+          item.style.display = "flex";
         } else {
-          todo.style.display = "none";
+          item.style.display = "none";
         }
         break;
       case "active":
-        if (!todo.classList.contains("completed")) {
-          todo.style.display = "flex";
+        if (!item.classList.contains("checked")) {
+          item.style.display = "flex";
         } else {
-          todo.style.display = "none";
+          item.style.display = "none";
         }
         break;
     }
@@ -124,87 +208,11 @@ function filterTodo(e) {
   });
 }
 
-function clearItems(completed) {
-  const completedTodos = document.getElementsByClassName("completed");
-  const activeTodos = document.querySelectorAll('ul > div:not(.completed)');
+function clearItems() {
+  todos = todos.filter(item => item.completed !== true);
 
-  let todos = []
-  localStorage.setItem("todos", JSON.stringify([]));
-
-  for(var i = 0; i < activeTodos.length; i++) { 
-    console.log(activeTodos[i].innerText)
-    todos = JSON.parse(localStorage.getItem("todos"));
-    todos.push(activeTodos[i].innerText);
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }
-
-  while(completedTodos.length > 0){
-    completedTodos[0].parentNode.removeChild(completedTodos[0]);
-  }
-
-  hideContainer()
-}
-
-function saveLocalTodos(todo) {
-  //Checker si il y a des items existants
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
-  todos.push(todo);
-  localStorage.setItem("todos", JSON.stringify(todos));
-}
-
-function removeLocalTodos(todo) {
-  let index = Array.from(todo.parentElement.children).indexOf(todo);
-  let todos;
-  
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-    console.log(todos);
-  }
-
-  todos.splice(index, 1);
-  localStorage.setItem("todos", JSON.stringify(todos));
-}
-
-function getTodos() {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
- 
-  todos.forEach(function (todo) {
-    //Todo DIV
-    const todoDiv = document.createElement("div");
-    const a = document.createAttribute("draggable");
-    a.value = "true";
-    todoDiv.setAttributeNode(a);
-    todoDiv.classList.add("todo");
-    //Input checkbox
-    todoDiv.insertAdjacentHTML( 'beforeend',
-    `<input type="checkbox" name="checkbox" class="complete-btn">`);
-    //Créer le Li
-    const newTodo = document.createElement("li");
-    newTodo.innerText = todo;
-    newTodo.classList.add("todo-item");
-    todoDiv.appendChild(newTodo);
-    //Bouton Supprimer
-    const trashButton = document.createElement("button");
-    trashButton.classList.add("trash-btn");
-    todoDiv.appendChild(trashButton);
-    //AJOUTER NOTRE TODO À TODO-LIST
-    todoList.appendChild(todoDiv);
-  });
-  
-  remainingItems()
-  hideContainer()
+  // Update local storage
+  addToLocalStorage(todos);
 }
 
 function hideContainer() {
@@ -219,12 +227,12 @@ function hideContainer() {
   }
 }
 
+
 function drag() {
   // (A) GET ALL LIST ITEMS
-  const items = document.getElementsByClassName('todo');
-  console.log(items);
-  let todoArray = JSON.parse(localStorage.getItem("todos"));
-  console.log(todoArray);
+  const items = document.getElementsByClassName('item');
+  let nodes = Array.from(items);
+  let arrayFromLocalStorage = JSON.parse(localStorage.getItem("todos"));
 
   // (B) MAKE ITEMS DRAGGABLE + SORTABLE
   for (let i of items) {
@@ -239,18 +247,21 @@ function drag() {
       i.classList.remove('grab');
     };
     
-    // (B2) DRAG START - YELLOW HIGHLIGHT DROPZONES
+    // (B2) DRAG START - RED HIGHLIGHT
     i.ondragstart = (e) => {
       current = i;
       e.target.classList.add("hint");
 
-      textDrop= i.childNodes[1].innerText
-      console.log(textDrop);
+      fromIndex = nodes.indexOf(e.target);
     };
     
-    // (B3) DRAG ENTER - RED HIGHLIGHT DROPZONE
-    i.ondragenter = () => {
-      if (i != current) { i.classList.add("active"); }
+    // (B3) DRAG ENTER - YELLOW HIGHLIGHT DROPZONE
+    i.ondragenter = (e) => {
+      if (i != current) { 
+        i.classList.add("active");
+        
+        toIndex = nodes.indexOf(e.target);
+      }
     };
 
     // (B4) DRAG LEAVE - REMOVE RED HIGHLIGHT
@@ -283,9 +294,13 @@ function drag() {
         } else {
           i.parentNode.insertBefore(current, i);
         }
-        todoArray.splice(currentpos, 1)
-        todoArray.splice(droppedpos, 0, String(textDrop))
-        localStorage.setItem("todos", JSON.stringify(todoArray));
+
+        // Update local storage
+        const element = arrayFromLocalStorage.splice(fromIndex, 1)[0];
+
+        arrayFromLocalStorage.splice(toIndex, 0, element);
+        localStorage.setItem('todos', JSON.stringify(arrayFromLocalStorage))
+        addToLocalStorage(arrayFromLocalStorage);
       }
     };
   }
