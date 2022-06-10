@@ -46,7 +46,6 @@ body {
   position: relative;
   width: 100vw;
   font-family: 'Outfit', sans-serif;
-  font-size: 18px;
   color: var(--Text-clr);
   background-color: var(--Bg-clr);
 }
@@ -59,8 +58,10 @@ body {
     height: 64px;
 }
 
-.todo-input { /** + item text**/
-  margin-left: 24px;
+.todo-input,
+.todo {
+  margin-left: 16px;
+  letter-spacing: 0.05rem;
 }
 
 .bgImage {
@@ -90,6 +91,7 @@ header .fas {
 }
 
 h1 {
+  font-size: 2.5rem;
   text-transform: uppercase;
   letter-spacing: 1rem;
   color: hsl(0, 0%, 98%);
@@ -109,7 +111,7 @@ form,
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 27px;
   position: relative;
 }
 
@@ -119,7 +121,7 @@ form,
   outline: none;
   border-radius: 5px;
   font-family: 'Outfit', sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   letter-spacing: .1rem;
   caret-color: var(--BrightBlue);
   color: var(--Text-clr);
@@ -148,8 +150,8 @@ form,
 .complete-btn::after {
   content: "";
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: none;
   background: var(--Todo-Bg-clr);
@@ -165,8 +167,8 @@ form,
 .complete-btn::before {
   content: "";
   display: inline-block;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--Border-clr);
   position: absolute;
@@ -184,7 +186,7 @@ form,
 .checkbox:hover:enabled::after,
 .complete-btn:checked::after {
   background: no-repeat url(../images/icon-check.svg) center/60%, -webkit-gradient(linear, left top, left bottom, from(#57ddff), to(#c058f3));
-  background: no-repeat url(../images/icon-check.svg) center/60%, linear-gradient(to bottom, #57ddff, #c058f3);
+  background: no-repeat url(../images/icon-check.svg) center/45%, linear-gradient(to bottom, #57ddff, #c058f3);
   cursor: pointer;
 }
 
@@ -271,7 +273,7 @@ form,
 
 .checked .todo {
   /* text-decoration: line-through; */
-  background: linear-gradient(to bottom, var(--Text-clr), var(--Text-clr)) no-repeat center 12px / 100% 1px;
+  background: linear-gradient(to bottom, var(--Text-clr), var(--Text-clr)) no-repeat center 11px / 100% 1px;
   opacity: 0.3;
 }
 
@@ -293,7 +295,7 @@ form,
 }
 
 .todoMenu {
-  padding: 0 24px; ***
+  padding: 0 24px;
 }
 
 .todoMenu > * {
@@ -310,7 +312,10 @@ form,
 }
 
 .filter-todo {
-  gap: 20px;
+  gap: 18px;
+  margin-left: 3em;
+  font-size: 0.875rem;
+  letter-spacing: 0.02rem;
 }
 
 .filter-todo .active {
@@ -320,8 +325,8 @@ form,
 .legend {
   margin-top: 50px;
   text-align: center;
-  font-size: 14px;
-  letter-spacing: .03rem;
+  font-size: 12px;
+  letter-spacing: .05rem;
   color: var(--Text-accent-clr);
 }
 

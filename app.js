@@ -9,6 +9,7 @@ const clear = document.querySelector(".clear-btn");
 //ECOUTEURS
 filterOption.addEventListener("click", filterTodo);
 clear.addEventListener("click", clearItems);
+window.addEventListener("load", hideContainer);
 
 form.addEventListener('submit', (e) => {
   e.preventDefault()
@@ -171,7 +172,6 @@ function remainingItems() {
 
   activeTodos = document.querySelectorAll('ul > li:not(.checked)');
   span.innerHTML = activeTodos.length;
-  /* span.insertAdjacentHTML( 'beforeend', `${activeTodos.length}`); */
 }
 
 function activeFilter(e) {
@@ -218,7 +218,8 @@ function clearItems() {
 function hideContainer() {
   const container = document.querySelector(".todo-container");
   const legend = document.querySelector(".legend");
-  if (JSON.parse(localStorage.getItem("todos")).length === 0) {
+
+  if (todos.length === 0) {
     container.style.display = "none";
     legend.style.display = "none";
   } else {
