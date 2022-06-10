@@ -121,7 +121,7 @@ form,
   border: none;
   outline: none;
   font-family: 'Outfit', sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   letter-spacing: .1rem;
   caret-color: var(--BrightBlue);
   color: var(--Text-clr);
@@ -185,8 +185,8 @@ form,
 
 .checkbox:hover:enabled::after,
 .complete-btn:checked::after {
-  background: no-repeat url(../images/icon-check.svg) center/60%, -webkit-gradient(linear, left top, left bottom, from(#57ddff), to(#c058f3));
-  background: no-repeat url(../images/icon-check.svg) center/45%, linear-gradient(to bottom, #57ddff, #c058f3);
+  background: no-repeat url(./images/icon-check.svg) center/60%, -webkit-gradient(linear, left top, left bottom, from(#57ddff), to(#c058f3));
+  background: no-repeat url(./images/icon-check.svg) center/45%, linear-gradient(to bottom, #57ddff, #c058f3);
   cursor: pointer;
 }
 
@@ -243,7 +243,7 @@ form,
   content:'';
   position: absolute;
   width: 23px;
-  height: 0.1px;
+  height: 1px;
   background-color: var(--Text-dark-clr);
   border-radius: 2px;
   top: 16px;
