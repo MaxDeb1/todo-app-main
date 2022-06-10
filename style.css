@@ -104,6 +104,7 @@ h1 {
 form,
 .todo-container {
   background-color: var(--Todo-Bg-clr);
+  border-radius: 5px;
 }
 
 form,
@@ -119,7 +120,6 @@ form,
   width: 100%;
   border: none;
   outline: none;
-  border-radius: 5px;
   font-family: 'Outfit', sans-serif;
   font-size: 14px;
   letter-spacing: .1rem;
@@ -167,8 +167,8 @@ form,
 .complete-btn::before {
   content: "";
   display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: var(--Border-clr);
   position: absolute;
@@ -191,9 +191,10 @@ form,
 }
 
 .todo-container {
-  margin-top: 24px; ***
+  margin-top: 24px;
   background-color: var(--Todo-Bg-clr);
-  border-radius: 5px;
+  -webkit-box-shadow: 0px 10px 25px 0px rgba(0,0,0,0.1); 
+  box-shadow: 0px 10px 25px 0px rgba(0,0,0,0.1);
 }
 
 .todo-items {
